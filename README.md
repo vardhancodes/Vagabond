@@ -1,32 +1,37 @@
-# 🧭 Vagabond — Full-Stack Tour Booking & Travel Management Platform
+# 🧭 Vagabond — Full-Stack Tour Management Platform
 
-[![Node.js](https://img.shields.io/badge/Node.js-v18%2B-green.svg)](https://nodejs.org/)
-[![Express.js](https://img.shields.io/badge/Express.js-4.x-lightgrey.svg)](https://expressjs.com/)
+[![Java](https://img.shields.io/badge/Java-17%2B-orange.svg)](https://www.oracle.com/java/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen.svg)](https://spring.io/projects/spring-boot)
 [![React](https://img.shields.io/badge/React-18.x-blue.svg)](https://react.dev/)
-[![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-brightgreen.svg)](https://www.mongodb.com/)
+[![Vite](https://img.shields.io/badge/Vite-5.x-purple.svg)](https://vitejs.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-3.x-38bdf8.svg)](https://tailwindcss.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**Vagabond** is a full-stack, end-to-end travel booking and tour management platform built using the MERN stack (MongoDB, Express.js, React.js, Node.js). It provides a seamless interface for users to discover, search, and book curated guided tours, while giving administrators dynamic control over tour itineraries, user bookings, and platform reviews.
+**Vagabond** is an enterprise-grade, full-stack tour booking and travel management platform. It features a robust **Spring Boot** RESTful backend for relational data persistence and business logic, paired with a modern **Vite + React** single-page application styled with **Tailwind CSS**.
 
 ---
 
 ## ✨ Key Features
 
-* **Authentication & Authorization:** Secure user registration and login utilizing **JSON Web Tokens (JWT)** and **Bcrypt** password hashing with Role-Based Access Control (RBAC).
-* **Tour Discovery & Search:** Dynamic filtering and search options (location, price, group size, duration) powered by **MongoDB Aggregation Pipelines**.
-* **Booking & Reservation Management:** Real-time booking processing allowing users to manage active reservations and view travel histories.
-* **Interactive Reviews & Ratings:** Verified user feedback system allowing travelers to submit reviews and star ratings for completed tours.
-* **Responsive UI/UX:** Modern, mobile-first design built with **React** and **Tailwind CSS**.
+* **Spring Boot REST Architecture:** Clean separation of concerns across Controllers, Services, and Repositories.
+* **Relational Database Schema:** Managed database initializations via `schema.sql` and `data.sql` for structured tour catalogs, user records, and booking workflows.
+* **Modern Frontend (Vite + React):** Fast module replacement, component-based layout, and smooth routing for client-side interactions.
+* **Tailwind CSS UI:** Fully responsive utility-first UI design tailored for desktop and mobile viewports.
+* **Configurable Environments:** Environment variable configuration (`.env`, `application.properties`) for local development, testing, and production builds.
 
 ---
 
 ## 🛠️ Tech Stack
 
-* **Frontend:** React.js, React Router, Context API / Redux, Tailwind CSS / CSS Modules
-* **Backend:** Node.js, Express.js REST APIs
-* **Database:** MongoDB, Mongoose ODM
-* **Security & Auth:** JSON Web Tokens (JWT), Bcrypt.js, CORS
-* **Development Tools:** Postman, Git/GitHub
+### Backend (`tour-app-backend`)
+* **Language/Framework:** Java, Spring Boot
+* **Build Tool:** Maven (`pom.xml`, Maven Wrapper)
+* **Database Management:** SQL (`schema.sql`, `data.sql`), Spring Data JPA / Hibernate
+
+### Frontend (`tours_frontend`)
+* **Framework / Build:** React.js, Vite
+* **Styling:** Tailwind CSS, PostCSS
+* **Tooling & Linting:** ESLint, Node.js (`package.json`)
 
 ---
 
@@ -34,18 +39,18 @@
 
 ```text
 ┌─────────────────────────────────────────────────────────┐
-│                     React Frontend                      │
-│     (Tour Search, Booking Forms, User Dashboard)        │
+│               Vite + React Frontend (SPA)               │
+│        (Tailwind CSS, Dynamic Booking Forms, UI)        │
 └────────────────────────────┬────────────────────────────┘
-                             │ REST API / JSON
+                             │ REST APIs / JSON
                              ▼
 ┌─────────────────────────────────────────────────────────┐
-│                   Express Backend API                   │
-│  (JWT Auth Middleware, Controllers, Error Handlers)     │
+│                Spring Boot Backend API                  │
+│       (Controllers, Service Layer, Repositories)        │
 └────────────────────────────┬────────────────────────────┘
-                             │ Mongoose ODM
+                             │ SQL / Hibernate JPA
                              ▼
 ┌─────────────────────────────────────────────────────────┐
-│                    MongoDB Database                     │
-│    (User Accounts, Tour Schemas, Bookings, Reviews)     │
+│                   Relational Database                   │
+│         (Tours, Bookings, Users, Schema Files)          │
 └─────────────────────────────────────────────────────────┘

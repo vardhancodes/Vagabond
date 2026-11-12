@@ -11,6 +11,102 @@
 
 ---
 
+## 🏛️ System Architecture
+
+```text
+┌─────────────────────────────────────────────────────────────────────────┐
+│                    REACT + VITE SINGLE PAGE CLIENT                      │
+│            (Tailwind CSS · Redux Toolkit · React Router v7)             │
+└───────────────┬─────────────────────────────────────────┬───────────────┘
+                │                                         │
+     Public / Customer Operations              Admin Dashboard Operations
+    (Browse, Register, Book Tours)             (CRUD Tours, Transports, Stays)
+                │                                         │
+                ▼                                         ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│                      SPRING BOOT REST API LAYER                         │
+│                    (Controllers & Filters on :8080)                     │
+├─────────────────────────────────────────────────────────────────────────┤
+│ • AuthController       (Sign-In, Sign-Up, OAuth2 Google, JWT Issuance)  │
+│ • TourController       (Catalog pagination, detail view, availability)  │
+│ • BookingController    (Cart submission, ticket calculation, payment)   │
+│ • AdminControllers     (Lodging, Transport, Location, Tour Modals)      │
+└───────────────┬─────────────────────────────────────────┬───────────────┘
+                │                                         │
+                ▼                                         ▼
+┌───────────────────────────────────────┐ ┌───────────────────────────────┐
+│          SERVICE & LOGIC              │ │      SECURITY & SESSIONS      │
+│   • TourService      • BookingService │ │ • JwtAuthenticationFilter     │
+│   • StripeService    • FileStorage    │ │ • SecurityFilterChain         │
+└───────────────────┬───────────────────┘ └───────────────┬───────────────┘
+                    │                                     │
+                    ▼                                     ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│                   HIBERNATE JPA DATA PERSISTENCE                        │
+│                 (Spring Data JPA Relational Schema)                     │
+└───────────────────────────────────┬─────────────────────────────────────┘
+                                    │
+                                    ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│                            DATABASE ENGINE                              │
+│       • Production / Development: PostgreSQL (schema.sql + data.sql)    │
+│       • Test Profile: Embedded In-Memory H2 Engine                      │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 🔐 Authentication & Session Flow
+
+```text
+Customer / Admin Browser                 Vite / React State (Redux)            Spring Boot (:8080)
+           │                                         │                                  │
+           │── Enter Email & Password ──────────────>│                                  │
+           │                                         │── POST /api/auth/login ─────────>│
+           │                                         │                                  │── Validate bcrypt
+           │                                         │                                  │── Sign JWT with Claims
+           │                                         │<── Return Bearer JWT Token ──────│
+           │                                         │                                  │
+           │                                         │── Save to localStorage           │
+           │                                         │── Update Redux Auth State        │
+           │<── Redirect to Dashboard ───────────────│                                  │
+           │                                         │                                  │
+           │── Access Protected Route (/user/*) ────>│── Check JWT expiration           │
+           │                                         │── Send Bearer Token in Header ──>│
+           │                                         │<── Authorized 200 OK + Data ─────│
+```
+
+---
+
+## 🗄️ Relational Data Model (ER Architecture)
+
+```text
+┌───────────────────────┐             ┌─────────────────────────┐
+│         USER          │             │          TOUR           │
+├───────────────────────┤             ├─────────────────────────┤
+│ id (PK)               │ 1         * │ id (PK)                 │
+│ name                  │────────────>│ tour_name               │
+│ email (Unique)        │             │ tour_description        │
+│ password (Hash)       │             │ price                   │
+│ role (CUSTOMER/ADMIN) │             │ tickets_available       │
+└──────────┬────────────┘             │ start_date / end_date   │
+           │ 1                        └───────┬─────────┬───────┘
+           │                                  │ 1       │ 1
+           │ *                                │         │
+┌──────────▼────────────┐                     │         │
+│        BOOKING        │                     ▼ 1       ▼ 1
+├───────────────────────┤ 1         * ┌──────────────┐ ┌──────────────┐
+│ id (PK)               │<────────────│   LOCATION   │ │   LODGING    │
+│ user_id (FK)          │             ├──────────────┤ ├──────────────┤
+│ tour_id (FK)          │             │ id (PK)      │ │ id (PK)      │
+│ booking_date          │             │ city, state  │ │ hotel_name   │
+│ ticket_count          │             │ country      │ │ room_type    │
+│ payment_status        │             └──────────────┘ └──────────────┘
+└───────────────────────┘
+```
+
+---
+
 ## ✨ Key Features
 
 * **Spring Boot REST Architecture:** Clean separation of concerns across Controllers, Services, and Repositories.
@@ -40,29 +136,6 @@
 
 ---
 
-## 🏛️ System Architecture
-
-```text
-┌─────────────────────────────────────────────────────────┐
-│               Vite + React Frontend (SPA)               │
-│        (Tailwind CSS, Dynamic Booking Forms, UI)        │
-└────────────────────────────┬────────────────────────────┘
-                             │ REST APIs / JSON
-                             ▼
-┌─────────────────────────────────────────────────────────┐
-│                Spring Boot Backend API                  │
-│       (Controllers, Service Layer, Repositories)        │
-└────────────────────────────┬────────────────────────────┘
-                             │ SQL / Hibernate JPA
-                             ▼
-┌─────────────────────────────────────────────────────────┐
-│                   Relational Database                   │
-│         (Tours, Bookings, Users, Schema Files)          │
-└─────────────────────────────────────────────────────────┘
-```
-
----
-
 ## 🚀 Getting Started
 
 ### Prerequisites
@@ -79,7 +152,7 @@
    cd tour-app-backend
    ```
 
-2. Configure environment properties in `src/main/resources/application.properties` (or export environment variables):
+2. Configure environment properties in `src/main/resources/application.properties`:
    ```properties
    # Profile selection: dev (PostgreSQL) or test (In-Memory H2)
    spring.profiles.active=dev

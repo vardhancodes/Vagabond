@@ -28,11 +28,13 @@ public class Tour {
     @Temporal(TemporalType.DATE)
     private Date endDate;
 
+    @Builder.Default
     @ElementCollection
     @CollectionTable(name = "tour_meals", joinColumns = @JoinColumn(name = "tour_id"))
     @Column(name = "meal")
     private List<String> meals = new ArrayList<>();
 
+    @Builder.Default
     @ElementCollection
     @CollectionTable(name = "tour_activities", joinColumns = @JoinColumn(name = "tour_id"))
     @Column(name = "activity")
@@ -41,6 +43,7 @@ public class Tour {
     private Double price;
     private Integer ticketsAvailable;
 
+    @Builder.Default
     @ElementCollection
     @CollectionTable(name = "tour_images", joinColumns = @JoinColumn(name = "tour_id"))
     @Column(name = "image")

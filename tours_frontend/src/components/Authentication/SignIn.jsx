@@ -17,7 +17,14 @@ const SignIn = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
-  const decodedTokenRole = token ? jwtDecode(token).role : null;
+  let decodedTokenRole = null;
+  if (token) {
+    try {
+      decodedTokenRole = jwtDecode(token)?.role || null;
+    } catch (e) {
+      localStorage.removeItem("token");
+    }
+  }
   const { loading } = useSelector((state) => state.user);
 
   const toggle = () => {
